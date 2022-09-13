@@ -1,0 +1,30 @@
+.container {
+    background-color: #eeeeee;
+    padding: 3rem;
+    flex-grow: 1;
+}
+
+
+.box-container {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 3.6rem;
+}
+
+
+.sub-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2.4rem;
+}
+
+
+.sub-header h2 {
+    display: inline-block;
+}
+
+.button-container {
+    display: flex;
+    justify-content: end;
+    gap: 1rem;
+}
