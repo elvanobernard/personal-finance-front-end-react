@@ -38,8 +38,8 @@
     justify-content: stretch;
 }
 
-.nav-link:link,
-.nav-link:visited {
+.nav-links a:link,
+.nav-links a:visited {
     display: block;
     text-decoration: none;
     color: white;
@@ -50,8 +50,9 @@
     margin-bottom: 0.5rem;
 }
 
-.nav-link:hover,
-.nav-link:active {
+.nav-links a:hover,
+.nav-links a:active,
+a.active {
     background-color: #24148a;
     color: white;
 }

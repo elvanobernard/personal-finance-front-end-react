@@ -4,12 +4,13 @@
     flex-grow: 1;
 }
 
+
 .box-container {
     display: flex;
-    /* justify-content: space-evenly; */
     gap: 2rem;
     margin-bottom: 3.6rem;
 }
+
 
 .sub-header {
     display: flex;
