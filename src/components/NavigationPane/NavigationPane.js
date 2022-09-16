@@ -3,6 +3,8 @@ import React from "react";
 import userImage from "../../static-image/user.png"
 import styles from "./NavigationPane.module.css"
 
+import {NavLink} from 'react-router-dom'
+
 function NavigationPane() {
     return (
         <div className={styles["navigation-pane"]}>
@@ -11,12 +13,12 @@ function NavigationPane() {
                 <h2 className={styles["user-welcome"]}>Hello User!</h2>
                 <nav>
                     <ul className={styles["nav-links"]}>
-                        <li><a className={styles["nav-link"]} href="#">Dashboard</a></li>
-                        <li><a className={styles["nav-link"]} href="#">Cash</a></li>
-                        <li><a className={styles["nav-link"]} href="#">Expenses</a></li>
-                        <li><a className={styles["nav-link"]} href="#">Incomes</a></li>
-                        <li><a className={styles["nav-link"]} href="#">Receivables</a></li>
-                        <li><a className={styles["nav-link"]} href="#">Payables</a></li>
+                        <li><NavLink activeClassName={styles.active} to="dashboard">Dashboard</NavLink></li>
+                        <li><NavLink activeClassName={styles.active} to="cash">Cash</NavLink></li>
+                        <li><NavLink activeClassName={styles.active} to="expenses">Expenses</NavLink></li>
+                        <li><NavLink activeClassName={styles.active} to="incomes">Incomes</NavLink></li>
+                        <li><NavLink activeClassName={styles.active} to="receivables">Receivables</NavLink></li>
+                        <li><NavLink activeClassName={styles.active} to="payables">Payables</NavLink></li>
                     </ul >
                 </nav >
             </div>
