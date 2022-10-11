@@ -9,21 +9,12 @@ import {dummy_balance_summary, dummy_monthly_expense, dummy_monthly_income, dumm
 
 function DashBoard(props) {
 
-    const sum_balance = (array) => {
-        let sum = 0
-        array.forEach(element => {
-            sum += element.balance
-        });
-
-        return sum
-    }
-
     return (
         <div className={styles.container}>
             <div className={styles["box-container"]}>
-                <Box title="Current Balance" amount={dummy_balance_summary[0].cash_balance} />
-                <Box title="Incomes" amount={sum_balance(dummy_monthly_income)}/>
-                <Box title="Expenses" amount={sum_balance(dummy_monthly_expense)}/>
+                <Box title="Current Balance" amount={props.balance} />
+                <Box title="Incomes" amount={props.incomeBalance}/>
+                <Box title="Expenses" amount={props.expenseBalance}/>
             </div>
             <div className={styles["dashboard-container"]}>
                 <DashboardItem />

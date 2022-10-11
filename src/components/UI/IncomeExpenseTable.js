@@ -3,6 +3,8 @@ import React from "react";
 import styles from "./IncomeExpenseTable.module.css"
 
 function IncomeExpenseTable(props) {
+    const formatter = Intl.NumberFormat("id-ID", {'style': 'currency', 'currency': 'IDR'}) 
+
     return (
         <div className={styles.container}>
             <table className={styles["income-expense-table"]}>
@@ -20,11 +22,11 @@ function IncomeExpenseTable(props) {
                         props.rows.map(row => {
                             return (
                                 <tr key={row.id}>
-                                    <td>{row.date.toLocaleDateString("id-ID")}</td>
-                                    <td>{row.transaction}</td>
+                                    <td>{row.date}</td>
+                                    <td>{row.id}</td>
                                     <td>{row.description}</td>
-                                    <td>{row.category_name}</td>
-                                    <td>IDR {row.amount}</td>
+                                    <td>{row.category}</td>
+                                    <td>{formatter.format(row.amount)}</td>
                                 </tr>
                             )
                         })
