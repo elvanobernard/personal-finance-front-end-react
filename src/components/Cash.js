@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios"
 
 import Box from "./UI/Box";
-import Button from "./UI/Button";
+import { Button } from "./UI/Button";
 import CashTable from "./UI/CashTable";
 import { AccountForm } from "./UI/Form";
 
@@ -11,7 +11,7 @@ import { dummy_cash_account } from "../dummydata";
 
 function Cash(props) {
     const getAccountForm = () => {
-        props.onFormOpen(<AccountForm onClose={props.onFormClose}/>)
+        props.onFormOpen(<AccountForm onClose={props.onFormClose} />)
     }
 
     return (
@@ -24,11 +24,11 @@ function Cash(props) {
             <div className={styles["sub-header"]}>
                 <h2>Cash</h2>
                 <div className={styles["button-container"]}>
-                    <Button name="New Account" onClick={getAccountForm}/>
+                    <Button name="New Account" onClick={getAccountForm} />
                     <Button name="New Transaction" />
                 </div>
             </div>
-            <CashTable rows={props.cashAccounts}/>
+            <CashTable rows={props.cashAccounts} />
         </div>
     )
 }
