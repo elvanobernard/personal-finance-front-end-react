@@ -2,6 +2,8 @@
     background-color: #eeeeee;
     padding: 3rem;
     flex-grow: 1;
+    max-height: 100vh;
+    overflow-y: auto;
 }
 
 

@@ -6,6 +6,7 @@ import styles from "./Form.module.css"
 
 export function IncomeExpenseForm(props) {
     const submitButtonHandler = () => {
+        // TODO: Implement validator
         const account = document.querySelector('#trans-account-field')
         const category = document.querySelector('#trans-category-field')
         const date = document.querySelector('#trans-date-field')
@@ -13,12 +14,10 @@ export function IncomeExpenseForm(props) {
         const amount = document.querySelector('#trans-amount-field')
         const paid = document.querySelector('#paid-box')
 
-        console.log(account.value)
-        console.log(category.value)
-        console.log(date.value)
-        console.log(description.value)
-        console.log(amount.value)
-        console.log(paid.checked)
+        if(!description.value) {
+            description.value = ""
+            console.log('Called');
+        };
 
         const data = {
             cash_account: account.value,
@@ -72,20 +71,35 @@ export function IncomeExpenseForm(props) {
 }
 
 export function AccountForm(props) {
+    // TODO: Implement validator
+    const submitButtonHandler = () => {
+        const name = document.querySelector('#cash-name-field');
+        const description = document.querySelector('#cash-desc-field');
+        const balance = document.querySelector('#cash-balance-field');
+
+        const data = {
+            name: name.value,
+            description: description.value,
+            balance: balance.value,
+        }
+
+        props.onSubmit(data)
+    }
+
     return (
         <Card className={styles.form}>
             <form className={styles["transaction-form"]}>
                 <h2>New Account</h2>
                 <label>Name</label>
-                <input type="text"></input>
+                <input id="cash-name-field" type="text"></input>
                 <label>Description</label>
-                <input type="text"></input>
+                <input id="cash-desc-field" type="text"></input>
                 <label>Initial Balance</label>
-                <input type="number"></input>
+                <input id="cash-balance-field" type="number"></input>
             </form>
 
             <div className={styles["button-container"]}>
-                <Button className={styles.button} name="New Account" />
+                <Button className={styles.button} name="New Account" onClick={submitButtonHandler} />
                 <Button className={styles.button} name="Cancel" onClick={props.onClose} />
             </div>
         </Card>

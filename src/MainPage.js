@@ -57,7 +57,17 @@ function MainPage() {
     });
 
     const submitNewCashAccount = async (data) => {
-
+        const endpoint = 'cash-accounts/';
+        
+        axios.post(`${host}${endpoint}`, data)
+        .then(res => {
+            const accounts = cashAccounts
+            accounts.push(res.data);
+            setCashAccounts(accounts)
+            closeHandler()
+        }).catch(err => {
+            console.log(err)
+        })
     }
 
 
@@ -220,6 +230,7 @@ function MainPage() {
                         payableBalance={payableBalance}
                         receivableBalance={receivableBalance}
                         cashAccounts={cashAccounts}
+                        onNewAccBtn={submitNewCashAccount}
                     />
                 </Route>
                 <Route path="/payables">

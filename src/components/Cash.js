@@ -11,7 +11,7 @@ import { dummy_cash_account } from "../dummydata";
 
 function Cash(props) {
     const getAccountForm = () => {
-        props.onFormOpen(<AccountForm onClose={props.onFormClose} />)
+        props.onFormOpen(<AccountForm onClose={props.onFormClose} onSubmit={props.onNewAccBtn}/>)
     }
 
     return (

@@ -35,26 +35,31 @@ tbody tr {
 } */
 
 .receivable-payable-table th:nth-child(1) {
-    width: 15%;
+    width: 10%;
     text-align: left;
 }
 
 .receivable-payable-table th:nth-child(2) {
-    width: 20%;
-    text-align: left;
-}
-
-.receivable-payable-table th:nth-child(3) {
-    width: 40%;
-    text-align: left;
-}
-
-.receivable-payable-table th:nth-child(4) {
     width: 15%;
     text-align: left;
 }
 
+.receivable-payable-table th:nth-child(3) {
+    width: 15%;
+    text-align: left;
+}
+
+.receivable-payable-table th:nth-child(4) {
+    width: 35%;
+    text-align: left;
+}
+
 .receivable-payable-table th:nth-child(5) {
+    width: 15%;
+    text-align: left;
+}
+
+.receivable-payable-table th:nth-child(6) {
     width: 20%;
     text-align: left;
 }
