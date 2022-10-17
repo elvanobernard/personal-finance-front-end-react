@@ -1,20 +1,23 @@
-import React, { useState } from "react";
-import ReactDOM from "react-dom"
+import React, { useEffect, useState } from "react";
+import axios from "axios"
 
 
 import styles from "./IncomeExpense.module.css"
-
-import { dummy_expense_category, dummy_expense_entries, dummy_income_entries } from "../dummydata"
+import {host, PAGE_ID} from "../constant.js"
 
 import Box from "./UI/Box";
 import { Pagination, PageSize } from "./UI/Pagination"
 import { Button } from "./UI/Button";
 import { CategoryTable, IncomeExpenseTable } from "./UI/Table";
-import Overlay from "./UI/Overlay";
 import { IncomeExpenseForm, CategoryForm } from "./UI/Form";
 
 function IncomeExpense(props) {
     // const dummy_entries_data = props.title === "Expense" ? dummy_expense_entries : dummy_income_entries
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [entries, setEntries] = useState({count: 0, results: []});
+    const offset = (currentPage - 1) * pageSize;
+    let pageCount = Math.floor(entries.count / pageSize) + 1;
 
     const getCategoryForm = () => {
         props.onModalOpen(
@@ -29,7 +32,7 @@ function IncomeExpense(props) {
         props.onModalOpen(
             <IncomeExpenseForm
                 onClose={props.onFormClose}
-                onSubmit={props.onFormSubmitBtn}
+                onSubmit={submitNewTransaction}
                 title={props.title}
                 cashAccounts={props.cashAccounts}
                 categories={props.categories}
@@ -42,6 +45,33 @@ function IncomeExpense(props) {
             <CategoryTable rows={props.categories} />
         )
     }
+
+    
+    const submitNewTransaction = async (data, identifier) => {
+        const endpoint = identifier === PAGE_ID.EXPENSE ? 'expenses/' : 'incomes/';
+        axios.post(`${host}${endpoint}`, data)
+            .then(res => {
+                console.log(res.data)
+                getEntriesData();
+                props.onFormClose();
+            }).catch(err => {
+                console.log(err);
+            })
+    };
+
+
+    const pageChangeHandler = (page) => {
+        setCurrentPage(page);
+    }
+
+    const getEntriesData = async () => {
+        const endpoint = props.identifier === PAGE_ID.EXPENSE ? "expenses" : "incomes";
+        const entriesData = await axios.get(`${host}${endpoint}/?limit=${pageSize}&offset=${offset}`);
+        setEntries(entriesData.data);
+    }
+
+    useEffect(() => {setCurrentPage(1)}, [props.identifier]);
+    useEffect(() => {getEntriesData()}, [props.identifier, currentPage, pageSize]);
 
     return (
         <div className={styles.container}>
@@ -59,9 +89,10 @@ function IncomeExpense(props) {
                     <Button name="New Filter" />
                 </div>
             </div>
-            <Pagination />
-            <PageSize />
-            <IncomeExpenseTable rows={props.entries} />
+            <Pagination currentPage={currentPage} pageCount={pageCount} onPageBtn={pageChangeHandler}/>
+            <IncomeExpenseTable rows={entries.results} />
+            <Pagination currentPage={currentPage} pageCount={pageCount} onPageBtn={pageChangeHandler}/>
+            {/* <PageSize /> */}
         </div >
     )
 }

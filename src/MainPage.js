@@ -2,16 +2,15 @@ import React, { useEffect, useState } from "react";
 import NavigationPane from "./components/NavigationPane/NavigationPane.js"
 import DashBoard from "./components/Dashboard.js"
 import IncomeExpense from "./components/IncomeExpense.js";
-
-import axios from "axios"
-import { Route, Switch, Redirect } from "react-router-dom"
-
-import { dummy_balance_summary } from "./dummydata.js"
-
-import styles from "./MainPage.module.css"
 import Cash from "./components/Cash.js";
 import ReceivablePayable from "./components/ReceivablePayable.js";
 import Overlay from "./components/UI/Overlay.js";
+
+import axios from "axios"
+import { Route, Switch, Redirect } from "react-router-dom"
+import {host, PAGE_ID} from "./constant"
+
+import styles from "./MainPage.module.css"
 
 const getSum = (arr, property) => {
     let sum = 0;
@@ -22,18 +21,8 @@ const getSum = (arr, property) => {
     return sum
 }
 
-const PAGE_ID = {
-    DASHBOARD: 1,
-    CASH: 2,
-    EXPENSE: 3,
-    INCOME: 4,
-    PAYABLE: 5,
-    RECEIVABLE: 6,
-}
-
 function MainPage() {
 
-    const host = 'http://127.0.0.1:8000/';
 
     const [form, setForm] = useState("");
     const [balance, setBalance] = useState({
@@ -44,12 +33,8 @@ function MainPage() {
     const [incomeSummary, setIncomeSummary] = useState([]);
     const [expenseSummary, setExpenseSummary] = useState([]);
     const [cashAccounts, setCashAccounts] = useState([]);
-    const [expenses, setExpenses] = useState([]);
     const [expenseCategories, setExpenseCategories] = useState([]);
-    const [incomes, setIncomes] = useState([]);
     const [incomeCategories, setIncomeCategories] = useState([]);
-    const [payables, setPayables] = useState([]);
-    const [receivables, setReceivables] = useState([]);
 
     const formatter = new Intl.NumberFormat('id-ID', {
         style: 'currency',
@@ -71,14 +56,14 @@ function MainPage() {
     };
 
     const submitNewCategory = async (data, identifier) => {
-        const endpoint = identifier == PAGE_ID.EXPENSE ? 'expense-categories/' : 'income-categories/';
+        const endpoint = identifier === PAGE_ID.EXPENSE ? 'expense-categories/' : 'income-categories/';
         axios.post(`${host}${endpoint}`, data)
             .then(res => {
-                if (identifier == PAGE_ID.EXPENSE) {
+                if (identifier === PAGE_ID.EXPENSE) {
                     const categories = expenseCategories;
                     categories.push(res.data);
                     setExpenseCategories(categories);
-                } else if (identifier == PAGE_ID.INCOME) {
+                } else if (identifier === PAGE_ID.INCOME) {
                     const categories = incomeCategories;
                     categories.push(res.data);
                     setIncomeCategories(categories);
@@ -89,31 +74,9 @@ function MainPage() {
             })
     };
 
-    const submitNewTransaction = async (data, identifier) => {
-        const endpoint = identifier == PAGE_ID.EXPENSE ? 'expenses/' : 'incomes/';
-        axios.post(`${host}${endpoint}`, data)
-            .then(res => {
-                console.log(res.data)
-                if (identifier == PAGE_ID.EXPENSE) {
-                    const entries = expenses;
-                    entries.push(res.data);
-                    // setExpenseCategories(entries);
-                    // TODO: Implement state updating function
-                    // TODO: Implement pagination
-                } else if (identifier == PAGE_ID.INCOME) {
-                    const entries = incomes;
-                    entries.push(res.data);
-                    // setIncomeCategories(entries);
-                }
-                closeHandler();
-            }).catch(err => {
-                console.log(err);
-            })
-    };
-
     const makePayment = async (data, identifier) => {
         console.log(data);
-        const endpoint = identifier == PAGE_ID.PAYABLE ? 'payables/' : 'receivables/'
+        const endpoint = identifier === PAGE_ID.PAYABLE ? 'payables/' : 'receivables/'
         const payable = await axios.get(`${host}${endpoint}${data.id}/`);
         const payableData = payable.data
         payableData.paid = true;
@@ -140,31 +103,23 @@ function MainPage() {
     async function getData() {
         // Obtain initial data from back-end
         try {
-            const cashBalance = axios.get(`${host}balance-summary/`);
+            const balanceSummary = axios.get(`${host}balance-summary/`);
             const time = new Date();
             const year = time.getFullYear();
             const month = time.getMonth() + 1;
             const expenseSummary = axios.get(`${host}monthly-expense-summary/${year}/${month}`);
             const incomeSummary = axios.get(`${host}monthly-income-summary/${year}/${month}`);
             const accounts = axios.get(`${host}cash-accounts/`)
-            const expenses = axios.get(`${host}expenses/`)
             const expenseCategories = axios.get(`${host}expense-categories/`)
-            const incomes = axios.get(`${host}incomes/`)
             const incomeCategories = axios.get(`${host}income-categories/`)
-            const payables = axios.get(`${host}payables/`)
-            const receivables = axios.get(`${host}receivables/`)
 
-            Promise.allSettled([cashBalance, expenseSummary, incomeSummary, accounts, expenses, expenseCategories, incomes, incomeCategories, payables, receivables]).then((results) => {
+            Promise.allSettled([balanceSummary, expenseSummary, incomeSummary, accounts, expenseCategories, incomeCategories]).then((results) => {
                 setBalance(results[0].value.data[0])
                 setExpenseSummary(results[1].value.data);
                 setIncomeSummary(results[2].value.data);
                 setCashAccounts(results[3].value.data)
-                setExpenses(results[4].value.data)
-                setExpenseCategories(results[5].value.data)
-                setIncomes(results[6].value.data)
-                setIncomeCategories(results[7].value.data)
-                setPayables(results[8].value.data)
-                setReceivables(results[9].value.data)
+                setExpenseCategories(results[4].value.data)
+                setIncomeCategories(results[5].value.data)
             });
         } catch (error) {
             console.log(error);
@@ -210,12 +165,10 @@ function MainPage() {
                         summary={expenseSummary}
                         budget={expenseBudget}
                         saving={expenseSaving}
-                        entries={expenses}
                         categories={expenseCategories}
                         cashAccounts={cashAccounts}
                         formatter={formatter}
                         onCategoryBtn={submitNewCategory}
-                        onFormSubmitBtn={submitNewTransaction}
                     />
                 </Route>
                 <Route path="/incomes">
@@ -227,12 +180,10 @@ function MainPage() {
                         summary={incomeSummary}
                         budget={incomeBudget}
                         saving={incomeSaving}
-                        entries={incomes}
                         categories={incomeCategories}
                         cashAccounts={cashAccounts}
                         formatter={formatter}
                         onCategoryBtn={submitNewCategory}
-                        onFormSubmitBtn={submitNewTransaction}
                     />
                 </Route>
                 <Route path="/dashboard">
@@ -260,8 +211,6 @@ function MainPage() {
                         identifier={PAGE_ID.PAYABLE}
                         cashAccounts={cashAccounts}
                         balance={payableBalance}
-                        entries={payables}
-                        onPayBtn={makePayment}
                     />
                 </Route>
                 <Route path="/receivables">
@@ -271,8 +220,6 @@ function MainPage() {
                         identifier={PAGE_ID.RECEIVABLE}
                         cashAccounts={cashAccounts}
                         balance={receivableBalance}
-                        entries={receivables}
-                        onPayBtn={makePayment}
                     />
                 </Route>
             </Switch>
