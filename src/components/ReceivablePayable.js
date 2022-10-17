@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom/client'
 
 import Box from "./UI/Box";
 import { Button } from "./UI/Button";
-import ReceivablePayableTable from "./UI/ReceivablePayableTable";
-import ReceivablePayableForm from "./UI/ReceivablePayableTable"
+import { ReceivablePayableTable } from "./UI/Table";
+import { CreatePaymentForm } from "./UI/Form"
 
 import styles from "./ReceivablePayable.module.css"
 
@@ -14,10 +14,17 @@ import Overlay from "./UI/Overlay.js";
 function ReceivablePayable(props) {
     const dummy_entries_data = props.title === "Expense" ? dummy_expense_entries : dummy_income_entries
 
-    const formOpen = useState(false)
-
-    const overlay = formOpen ? <Overlay /> : "";
-    const form = formOpen ? <ReceivablePayableForm /> : "";
+    const getPaymentForm = (id) => {
+        props.onModalOpen(
+            <CreatePaymentForm
+                id={id}
+                cashAccounts={props.cashAccounts}
+                onClose={props.onFormClose}
+                onSubmit={props.onPayBtn}
+                identifier={props.identifier}
+            />
+        )
+    }
 
     console.log(props.entries)
 
@@ -38,7 +45,7 @@ function ReceivablePayable(props) {
                     <Button name="Filter" />
                 </div>
             </div>
-            <ReceivablePayableTable rows={props.entries} />
+            <ReceivablePayableTable rows={props.entries} onPayBtn={getPaymentForm} identifier={props.identifier} />
         </div >
     )
 }

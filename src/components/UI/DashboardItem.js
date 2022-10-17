@@ -2,10 +2,10 @@ import React from "react";
 
 import styles from "./DashboardItem.module.css"
 
-function DashboardItem() {
+function DashboardItem(props) {
     return (
         <div className={styles.container}>
-            This is analysis
+            {props.children}
         </div>
     );
 }

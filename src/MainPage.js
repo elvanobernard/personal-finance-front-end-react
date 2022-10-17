@@ -33,13 +33,13 @@ const PAGE_ID = {
 
 function MainPage() {
 
-    const host = 'http://127.0.0.1:8000/'
+    const host = 'http://127.0.0.1:8000/';
 
     const [form, setForm] = useState("");
     const [balance, setBalance] = useState({
         "cash_balance": 0,
         "receivable_balance": 0,
-        "payable_balance": 0
+        "payable_balance": 0,
     });
     const [incomeSummary, setIncomeSummary] = useState([]);
     const [expenseSummary, setExpenseSummary] = useState([]);
@@ -58,18 +58,17 @@ function MainPage() {
 
     const submitNewCashAccount = async (data) => {
         const endpoint = 'cash-accounts/';
-        
-        axios.post(`${host}${endpoint}`, data)
-        .then(res => {
-            const accounts = cashAccounts
-            accounts.push(res.data);
-            setCashAccounts(accounts)
-            closeHandler()
-        }).catch(err => {
-            console.log(err)
-        })
-    }
 
+        axios.post(`${host}${endpoint}`, data)
+            .then(res => {
+                const accounts = cashAccounts
+                accounts.push(res.data);
+                setCashAccounts(accounts)
+                closeHandler()
+            }).catch(err => {
+                console.log(err)
+            })
+    };
 
     const submitNewCategory = async (data, identifier) => {
         const endpoint = identifier == PAGE_ID.EXPENSE ? 'expense-categories/' : 'income-categories/';
@@ -88,7 +87,7 @@ function MainPage() {
             }).catch((err) => {
                 console.log(err);
             })
-    }
+    };
 
     const submitNewTransaction = async (data, identifier) => {
         const endpoint = identifier == PAGE_ID.EXPENSE ? 'expenses/' : 'incomes/';
@@ -99,6 +98,8 @@ function MainPage() {
                     const entries = expenses;
                     entries.push(res.data);
                     // setExpenseCategories(entries);
+                    // TODO: Implement state updating function
+                    // TODO: Implement pagination
                 } else if (identifier == PAGE_ID.INCOME) {
                     const entries = incomes;
                     entries.push(res.data);
@@ -108,7 +109,25 @@ function MainPage() {
             }).catch(err => {
                 console.log(err);
             })
-    }
+    };
+
+    const makePayment = async (data, identifier) => {
+        console.log(data);
+        const endpoint = identifier == PAGE_ID.PAYABLE ? 'payables/' : 'receivables/'
+        const payable = await axios.get(`${host}${endpoint}${data.id}/`);
+        const payableData = payable.data
+        payableData.paid = true;
+        payableData.payment_date = data.date;
+        payableData.cash_account = data.account;
+        console.log(payableData);
+        axios.put(`${host}${endpoint}${data.id}/`, payableData)
+            .then(res => {
+                console.log(res);
+                closeHandler()
+            }).catch(err => {
+                console.log(err);
+            })
+    };
 
     const closeHandler = () => {
         setForm("")
@@ -185,7 +204,7 @@ function MainPage() {
                 <Route path="/expenses">
                     <IncomeExpense title="Expense"
                         identifier={PAGE_ID.EXPENSE}
-                        onFormOpen={formOpenHandler}
+                        onModalOpen={formOpenHandler}
                         onFormClose={closeHandler}
                         balance={expenseBalance}
                         summary={expenseSummary}
@@ -202,7 +221,7 @@ function MainPage() {
                 <Route path="/incomes">
                     <IncomeExpense title="Income"
                         identifier={PAGE_ID.INCOME}
-                        onFormOpen={formOpenHandler}
+                        onModalOpen={formOpenHandler}
                         onFormClose={closeHandler}
                         balance={incomeBalance}
                         summary={incomeSummary}
@@ -213,6 +232,7 @@ function MainPage() {
                         cashAccounts={cashAccounts}
                         formatter={formatter}
                         onCategoryBtn={submitNewCategory}
+                        onFormSubmitBtn={submitNewTransaction}
                     />
                 </Route>
                 <Route path="/dashboard">
@@ -224,7 +244,7 @@ function MainPage() {
                     />
                 </Route>
                 <Route path="/cash" >
-                    <Cash onFormOpen={formOpenHandler} onFormClose={closeHandler}
+                    <Cash onModalOpen={formOpenHandler} onFormClose={closeHandler}
                         identifier={PAGE_ID.CASH}
                         cashBalance={cashBalance}
                         payableBalance={payableBalance}
@@ -235,15 +255,25 @@ function MainPage() {
                 </Route>
                 <Route path="/payables">
                     <ReceivablePayable title="Payable"
+                        onModalOpen={formOpenHandler}
+                        onFormClose={closeHandler}
                         identifier={PAGE_ID.PAYABLE}
+                        cashAccounts={cashAccounts}
                         balance={payableBalance}
-                        entries={payables} />
+                        entries={payables}
+                        onPayBtn={makePayment}
+                    />
                 </Route>
                 <Route path="/receivables">
                     <ReceivablePayable title="Receivable"
+                        onModalOpen={formOpenHandler}
+                        onFormClose={closeHandler}
                         identifier={PAGE_ID.RECEIVABLE}
+                        cashAccounts={cashAccounts}
                         balance={receivableBalance}
-                        entries={receivables} />
+                        entries={receivables}
+                        onPayBtn={makePayment}
+                    />
                 </Route>
             </Switch>
         </div>

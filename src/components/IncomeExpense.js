@@ -7,8 +7,9 @@ import styles from "./IncomeExpense.module.css"
 import { dummy_expense_category, dummy_expense_entries, dummy_income_entries } from "../dummydata"
 
 import Box from "./UI/Box";
+import { Pagination, PageSize } from "./UI/Pagination"
 import { Button } from "./UI/Button";
-import IncomeExpenseTable from "./UI/IncomeExpenseTable";
+import { CategoryTable, IncomeExpenseTable } from "./UI/Table";
 import Overlay from "./UI/Overlay";
 import { IncomeExpenseForm, CategoryForm } from "./UI/Form";
 
@@ -16,7 +17,7 @@ function IncomeExpense(props) {
     // const dummy_entries_data = props.title === "Expense" ? dummy_expense_entries : dummy_income_entries
 
     const getCategoryForm = () => {
-        props.onFormOpen(
+        props.onModalOpen(
             <CategoryForm
                 onClose={props.onFormClose}
                 onSubmit={props.onCategoryBtn}
@@ -25,7 +26,7 @@ function IncomeExpense(props) {
     }
 
     const getIncomeExpenseForm = () => {
-        props.onFormOpen(
+        props.onModalOpen(
             <IncomeExpenseForm
                 onClose={props.onFormClose}
                 onSubmit={props.onFormSubmitBtn}
@@ -34,6 +35,12 @@ function IncomeExpense(props) {
                 categories={props.categories}
                 identifier={props.identifier}
             />);
+    }
+
+    const getCategoryTableModal = () => {
+        props.onModalOpen(
+            <CategoryTable rows={props.categories} />
+        )
     }
 
     return (
@@ -47,11 +54,13 @@ function IncomeExpense(props) {
                 <h2>{props.title + "s"}</h2>
                 <div className={styles["button-container"]}>
                     <Button name="New Category" onClick={getCategoryForm} />
-                    <Button name="Show Category" />
+                    <Button name="Show Category" onClick={getCategoryTableModal} />
                     <Button name={"New " + props.title} onClick={getIncomeExpenseForm} />
                     <Button name="New Filter" />
                 </div>
             </div>
+            <Pagination />
+            <PageSize />
             <IncomeExpenseTable rows={props.entries} />
         </div >
     )

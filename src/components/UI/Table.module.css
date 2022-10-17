@@ -1,0 +1,121 @@
+.modal {
+    position: fixed;
+    left: 60%;
+    top: 50%;
+    z-index: 500;
+    transform: translate(-50%, -50%);
+    max-height: 50%;
+    overflow-y: auto;
+}
+
+.container-small {
+    background-color: #ffffff;
+    padding: 0.8rem;
+    border-radius: 5px;
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 5px;
+}
+
+table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead th {
+    padding: 1rem 2rem;
+}
+
+thead tr {
+    border-bottom: 1px solid;
+    background-image: linear-gradient(#3E23E7, #796CCB);
+    color: #ffffff;
+}
+
+tbody td {
+    padding: 1.2rem 2rem;
+}
+
+tbody tr {
+    border-bottom: 0.5px solid #6b6b6b;
+}
+
+.receivable-payable-table th:nth-child(1) {
+    width: 10%;
+    text-align: left;
+}
+
+.receivable-payable-table th:nth-child(2) {
+    width: 15%;
+    text-align: left;
+}
+
+.receivable-payable-table th:nth-child(3) {
+    width: 15%;
+    text-align: left;
+}
+
+.receivable-payable-table th:nth-child(4) {
+    width: 35%;
+    text-align: left;
+}
+
+.receivable-payable-table th:nth-child(5) {
+    width: 15%;
+    text-align: left;
+}
+
+.receivable-payable-table th:nth-child(6) {
+    width: 20%;
+    text-align: center;
+}
+
+.cash-table th:nth-child(1) {
+    width: 20%;
+    text-align: left;
+}
+
+.cash-table th:nth-child(2) {
+    width: 50%;
+    text-align: left;
+}
+
+.cash-table th:nth-child(3) {
+    width: 30%;
+    text-align: left;
+}
+
+
+.income-expense-table th:nth-child(1) {
+    width: 15%;
+    text-align: left;
+}
+
+.income-expense-table th:nth-child(2) {
+    width: 20%;
+    text-align: left;
+}
+
+.income-expense-table th:nth-child(3) {
+    width: 40%;
+    text-align: left;
+}
+
+.income-expense-table th:nth-child(4) {
+    width: 15%;
+    text-align: left;
+}
+
+.income-expense-table th:nth-child(5) {
+    width: 20%;
+    text-align: left;
+}
+
+.category-table th:nth-child(2) {
+    width: 30%;
+    text-align: left;
+}

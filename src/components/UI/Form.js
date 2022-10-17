@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "./Button";
-import Card from "./Card"
+import { Card, SmallCard } from "./Card"
 
 import styles from "./Form.module.css"
 
@@ -14,10 +14,10 @@ export function IncomeExpenseForm(props) {
         const amount = document.querySelector('#trans-amount-field')
         const paid = document.querySelector('#paid-box')
 
-        if(!description.value) {
-            description.value = ""
-            console.log('Called');
-        };
+        // if (!description.value) {
+        //     description.value = ""
+        //     console.log('Called');
+        // };
 
         const data = {
             cash_account: account.value,
@@ -32,7 +32,7 @@ export function IncomeExpenseForm(props) {
     }
 
     return (
-        <Card className={styles.form}>
+        <Card className={styles.modal}>
             <form className={styles["transaction-form"]}>
                 <h2>New {props.title}</h2>
                 <label>Account</label>
@@ -87,7 +87,7 @@ export function AccountForm(props) {
     }
 
     return (
-        <Card className={styles.form}>
+        <Card className={styles.modal}>
             <form className={styles["transaction-form"]}>
                 <h2>New Account</h2>
                 <label>Name</label>
@@ -113,14 +113,14 @@ export function CategoryForm(props) {
         const categoryName = nameField.value;
         const categoryBudget = parseInt(budgetField.value);
         if (categoryName.length > 0 && categoryBudget >= 0) {
-            nameField.value = ""
-            budgetField.value = ""
+            nameField.value = "";
+            budgetField.value = "";
             props.onSubmit({
                 'name': categoryName,
                 'budget': categoryBudget,
                 'monthly_summaries': [],
                 'entries': [],
-            }, props.identifier)
+            }, props.identifier);
         } else {
             console.log(props.identifier)
             console.log("Invalid value")
@@ -128,9 +128,13 @@ export function CategoryForm(props) {
     }
 
     return (
-        <Card className={styles.form}>
+        <Card className={styles.modal}>
             <form className={styles["transaction-form"]}>
-                <h2>New Category</h2>
+                {
+                    props.update ?
+                        <h2>Update Category</h2> :
+                        <h2>New Category</h2>
+                }
                 <label>Name</label>
                 <input id="category-name-field" type="text"></input>
                 <label>Budget</label>
@@ -139,6 +143,47 @@ export function CategoryForm(props) {
 
             <div className={styles["button-container"]}>
                 <Button className={styles.button} name="New Category" onClick={submitButtonHandler} />
+                <Button className={styles.button} name="Cancel" onClick={props.onClose} />
+            </div>
+        </Card>
+    )
+}
+
+export function CreatePaymentForm(props) {
+
+    const submitButtonHandler = () => {
+        const id = document.querySelector(`#payment-id-data`);
+        const account = document.querySelector(`#payment-account-field`);
+        const date = document.querySelector(`#payment-date-field`);
+
+        const data = {
+            id: id.value,
+            account: parseInt(account.value),
+            date: date.value,
+        };
+
+        props.onSubmit(data, props.identifier);
+    }
+
+    return (
+        <Card className={styles.modal}>
+            <form className={styles["transaction-form"]}>
+                <data id="payment-id-data" value={props.id} />
+                <h2>Make Payment</h2>
+                <label>Account</label>
+                <select id="payment-account-field">
+                    {
+                        props.cashAccounts.map(account => {
+                            return <option key={account.id} value={account.id}>{account.name}</option>
+                        })
+                    }
+                </select>
+                <label>Date</label>
+                <input id="payment-date-field" type="date"></input>
+            </form>
+
+            <div className={styles["button-container"]}>
+                <Button className={styles.button} name="Create Payment" onClick={submitButtonHandler} />
                 <Button className={styles.button} name="Cancel" onClick={props.onClose} />
             </div>
         </Card>

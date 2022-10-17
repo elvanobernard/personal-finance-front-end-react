@@ -3,7 +3,7 @@ import axios from "axios"
 
 import Box from "./UI/Box";
 import { Button } from "./UI/Button";
-import CashTable from "./UI/CashTable";
+import { CashTable } from "./UI/Table";
 import { AccountForm } from "./UI/Form";
 
 import styles from "./Cash.module.css"
@@ -11,7 +11,7 @@ import { dummy_cash_account } from "../dummydata";
 
 function Cash(props) {
     const getAccountForm = () => {
-        props.onFormOpen(<AccountForm onClose={props.onFormClose} onSubmit={props.onNewAccBtn}/>)
+        props.onModalOpen(<AccountForm onClose={props.onFormClose} onSubmit={props.onNewAccBtn} />)
     }
 
     return (
