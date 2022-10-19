@@ -4,7 +4,7 @@ import axios from "axios"
 import Box from "./UI/Box";
 import { Button } from "./UI/Button";
 import { ReceivablePayableTable } from "./UI/Table";
-import { CreatePaymentForm } from "./UI/Form"
+import { CreatePaymentForm, FilterForm } from "./UI/Form"
 import { Pagination } from "./UI/Pagination";
 import {host, PAGE_ID} from "../constant.js"
 
@@ -15,7 +15,7 @@ function ReceivablePayable(props) {
     const [pageSize, setPageSize] = useState(10);
     const [entries, setEntries] = useState({count: 0, results: []});
     const offset = (currentPage - 1) * pageSize;
-    let pageCount = Math.floor(entries.count / pageSize) + 1;
+    let pageCount = Math.ceil(entries.count / pageSize);
 
     const getPaymentForm = (id) => {
         props.onModalOpen(
@@ -26,6 +26,12 @@ function ReceivablePayable(props) {
                 onSubmit={makePayment}
                 identifier={props.identifier}
             />
+        )
+    }
+
+    const getFilterModal = () => {
+        props.onModalOpen(
+            <FilterForm onClose={props.onFormClose}/>
         )
     }
 
@@ -72,9 +78,9 @@ function ReceivablePayable(props) {
             <div className={styles["sub-header"]}>
                 <h2>{props.title + "s"}</h2>
                 <div className={styles["button-container"]}>
-                    <Button name="Add" />
-                    <Button name="Sort" />
-                    <Button name="Filter" />
+                    {/* <Button name="Add" /> */}
+                    {/* <Button name="Sort" /> */}
+                    <Button name="Filter" onClick={getFilterModal}/>
                 </div>
             </div>
             <Pagination currentPage={currentPage} pageCount={pageCount} onPageBtn={pageChangeHandler}/>

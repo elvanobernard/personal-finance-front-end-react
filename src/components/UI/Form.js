@@ -115,34 +115,37 @@ export function CategoryForm(props) {
         if (categoryName.length > 0 && categoryBudget >= 0) {
             nameField.value = "";
             budgetField.value = "";
-            props.onSubmit({
+            const data = {
                 'name': categoryName,
                 'budget': categoryBudget,
-                'monthly_summaries': [],
-                'entries': [],
-            }, props.identifier);
+            }
+
+            if(props.data.id){
+                data.id = props.data.id;
+                props.onUpdate(data, props.identifier, props.data.index);
+            } else {
+                props.onSubmit(data, props.identifier);
+            }
         } else {
             console.log(props.identifier)
             console.log("Invalid value")
         }
     }
 
+    const title = props.data.id ? "Update Category" : "New Category"
+
     return (
         <Card className={styles.modal}>
             <form className={styles["transaction-form"]}>
-                {
-                    props.update ?
-                        <h2>Update Category</h2> :
-                        <h2>New Category</h2>
-                }
+                <h2>{title}</h2>
                 <label>Name</label>
-                <input id="category-name-field" type="text"></input>
+                <input id="category-name-field" type="text" defaultValue={props.data.name}></input>
                 <label>Budget</label>
-                <input id="category-budget-field" type="number"></input>
+                <input id="category-budget-field" type="number" defaultValue={props.data.budget}></input>
             </form>
 
             <div className={styles["button-container"]}>
-                <Button className={styles.button} name="New Category" onClick={submitButtonHandler} />
+                <Button className={styles.button} name={title} onClick={submitButtonHandler} />
                 <Button className={styles.button} name="Cancel" onClick={props.onClose} />
             </div>
         </Card>
@@ -184,6 +187,42 @@ export function CreatePaymentForm(props) {
 
             <div className={styles["button-container"]}>
                 <Button className={styles.button} name="Create Payment" onClick={submitButtonHandler} />
+                <Button className={styles.button} name="Cancel" onClick={props.onClose} />
+            </div>
+        </Card>
+    )
+}
+
+export function FilterForm(props) {
+    return (
+        <Card className={styles.modal}>
+            <form className={styles["transaction-form"]}>
+            <h2>Filter (Not Yet Implemented)</h2>
+            <label>Description</label>
+            <input type="text"></input>
+            <div className={styles['filter-flex']}>
+                <div>
+                    <label>Start Date</label>
+                    <input type="date"></input>
+                </div>
+                <div>
+                    <label>End Date</label>
+                    <input type="date"></input>
+                </div>
+            </div>
+            <div className={styles['filter-flex']}>
+                <div>
+                    <label>Minimal Amount</label>
+                    <input type="number"></input>
+                </div>
+                <div>
+                    <label>Maximal Amount</label>
+                    <input type="number"></input>
+                </div>
+            </div>
+            </form>
+            <div className={styles["button-container"]}>
+                <Button className={styles.button} name="Filter" onClick={""} />
                 <Button className={styles.button} name="Cancel" onClick={props.onClose} />
             </div>
         </Card>

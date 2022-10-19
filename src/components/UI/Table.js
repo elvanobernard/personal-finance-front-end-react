@@ -1,7 +1,7 @@
 import React from "react";
 
-import { Button, SmallButton } from "./Button";
-import { Card, SmallCard } from './Card'
+import {  SmallButton } from "./Button";
+import {  SmallCard } from './Card'
 
 import styles from "./Table.module.css"
 
@@ -40,7 +40,10 @@ export function CashTable(props) {
 }
 
 export function CategoryTable(props) {
-    console.log(props.rows)
+    
+    const editBtnHandler = (e) => {
+        props.onEditBtn({...e.target.parentElement.parentElement.dataset});
+    }
 
     return (
         <SmallCard className={styles.modal}>
@@ -49,17 +52,19 @@ export function CategoryTable(props) {
                     <thead>
                         <tr>
                             <th>Category</th>
+                            <th>Budget</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {
                             props.rows ?
-                                props.rows.map(row => {
+                                props.rows.map((row, index) => {
                                     return (
-                                        <tr key={row.id}>
+                                        <tr key={row.id} data-id={row.id} data-budget={row.budget} data-name={row.name} data-index={index}>
                                             <td>{row.name}</td>
-                                            <td><SmallButton name="Edit" /></td>
+                                            <td>{formatter.format(row.budget)}</td>
+                                            <td><SmallButton name="Edit" onClick={editBtnHandler}/></td>
                                         </tr>
                                     )
                                 }) :

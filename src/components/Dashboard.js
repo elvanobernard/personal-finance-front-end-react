@@ -13,58 +13,105 @@ import DashboardItem from "./UI/DashboardItem";
 // Pie Chart -> Revenue Composition
 // 
 // 
-const data = {
-    datasets: [
-        {
-            label: 'Spending',
-            // data: [50, 20],
-            data: [{ x: "Home", y: 50 }, { x: 'Fitness', y: 20 }],
-            backgroundColor: 'rgb(62, 35, 231)'
-        },
-        {
-            // data: [70, 30],
-            label: 'Budget',
-            data: [{ x: "Home", y: 70 }, { x: 'Fitness', y: 30 }],
-            backgroundColor: 'rgb(121, 108, 203)'
+
+
+const processData = (summaries) => {
+    const randomColor = () => "#" + Math.floor(Math.random()*16777215).toString(16);
+
+    const data = {
+        spending: [],
+        budget: [],
+        labels: [],
+        backgroundColor: []
+    }
+
+    for(let i = 0; i < summaries.length; i++){
+        const summary = summaries[i];
+        data.spending.push(summary.balance)
+        data.budget.push(summary.category.budget)
+        data.labels.push(summary.category.name)
+        data.backgroundColor.push(randomColor())
+    }
+
+    return data;
+};
+
+const getBarChart = (dataset, title) => {
+    const data = {
+        datasets: [
+            {
+                label: 'Actual',
+                data: dataset.spending,
+                backgroundColor: 'rgb(62, 35, 231)'
+            },
+            {
+                label: 'Budget',
+                data: dataset.budget,
+                backgroundColor: 'rgb(121, 108, 203)'
+            }
+        ],
+        labels: dataset.labels
+    }
+
+    const options = {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Budget vs Actual'
+          }
         }
-    ],
-    // labels: ['Home', 'Fitness']
-}
+      }
 
-const test = <Bar
-    data={data}
-/>
-
-const data2 = {
-    datasets: [
-        {
-            data: [50, 20],
-            backgroundColor: ['rgb(62, 35, 231)', 'rgb(121, 108, 203)']
-        }
-    ],
-    labels: ['Home', 'Fitness'],
-}
-
-const data3 = {
+    return (
+    <React.Fragment>
+        <Bar
+        data={data}
+        options={options}
+        />
+    </React.Fragment>
+)
 
 }
 
-const test2 = <Doughnut data={data2}
-    // width={'50%'}
-    options={{
+const getDoughnutChart = (dataset) => {
+    const data = {
+        datasets: [
+            {
+                data: dataset.spending,
+                backgroundColor: dataset.backgroundColor
+            }
+        ],
+        labels: dataset.labels,
+    }
+    
+    const options = {
+        responsive: true,
         maintainAspectRatio: false,
         plugins: {
-            title: {
-                display: true,
-                text: "Expense Composition",
-            }
+          legend: {
+            position: 'right',
+          },
+          title: {
+            display: true,
+            text: 'Composition'
+          }
         }
-    }}
+      }
 
-/>
+    return (
+    <React.Fragment>
+        <Doughnut data={data}
+        options={options}/>
+    </React.Fragment>
+    )
+}
 
 
 function DashBoard(props) {
+
+    const expenseData = processData(props.expenseSummary);
+    const incomeData = processData(props.incomeSummary);
 
     return (
         <div className={styles.container}>
@@ -74,10 +121,10 @@ function DashBoard(props) {
                 <Box title="Expenses" amount={props.expenseBalance} />
             </div>
             <div className={styles["dashboard-container"]}>
-                <DashboardItem>{test}</DashboardItem>
-                <DashboardItem>{test2}</DashboardItem>
-                <DashboardItem />
-                <DashboardItem />
+                <DashboardItem>{getBarChart(expenseData)}</DashboardItem>
+                <DashboardItem>{getDoughnutChart(expenseData)}</DashboardItem>
+                <DashboardItem>{getBarChart(incomeData)}</DashboardItem>
+                <DashboardItem>{getDoughnutChart(incomeData)}</DashboardItem>
             </div>
         </div>
     )

@@ -9,7 +9,7 @@ import Box from "./UI/Box";
 import { Pagination, PageSize } from "./UI/Pagination"
 import { Button } from "./UI/Button";
 import { CategoryTable, IncomeExpenseTable } from "./UI/Table";
-import { IncomeExpenseForm, CategoryForm } from "./UI/Form";
+import { IncomeExpenseForm, CategoryForm, FilterForm } from "./UI/Form";
 
 function IncomeExpense(props) {
     // const dummy_entries_data = props.title === "Expense" ? dummy_expense_entries : dummy_income_entries
@@ -17,14 +17,16 @@ function IncomeExpense(props) {
     const [pageSize, setPageSize] = useState(10);
     const [entries, setEntries] = useState({count: 0, results: []});
     const offset = (currentPage - 1) * pageSize;
-    let pageCount = Math.floor(entries.count / pageSize) + 1;
+    let pageCount =  Math.ceil(entries.count / pageSize);
 
-    const getCategoryForm = () => {
+    const getCategoryForm = (data={id:"", name: "", budget: ""}) => {
         props.onModalOpen(
             <CategoryForm
                 onClose={props.onFormClose}
-                onSubmit={props.onCategoryBtn}
+                onSubmit={props.onNewCategory}
+                onUpdate={props.onUpdateCategory}
                 identifier={props.identifier}
+                data={data}
             />);
     }
 
@@ -41,11 +43,21 @@ function IncomeExpense(props) {
     }
 
     const getCategoryTableModal = () => {
+
+        const editBtnHandler = (data) => {
+            getCategoryForm(data)
+        }
+
         props.onModalOpen(
-            <CategoryTable rows={props.categories} />
+            <CategoryTable rows={props.categories} onEditBtn={editBtnHandler}/>
         )
     }
 
+    const getFilterModal = () => {
+        props.onModalOpen(
+            <FilterForm onClose={props.onFormClose}/>
+        )
+    }
     
     const submitNewTransaction = async (data, identifier) => {
         const endpoint = identifier === PAGE_ID.EXPENSE ? 'expenses/' : 'incomes/';
@@ -53,12 +65,12 @@ function IncomeExpense(props) {
             .then(res => {
                 console.log(res.data)
                 getEntriesData();
+                props.onUpdate(identifier);
                 props.onFormClose();
             }).catch(err => {
                 console.log(err);
             })
     };
-
 
     const pageChangeHandler = (page) => {
         setCurrentPage(page);
@@ -76,9 +88,9 @@ function IncomeExpense(props) {
     return (
         <div className={styles.container}>
             <div className={styles["box-container"]}>
-                <Box title="Spending" amount={props.balance} />
-                <Box title="Budget" amount={props.budget} />
-                <Box title="Saving" amount={props.saving} />
+                <Box title={props.identifier === PAGE_ID.EXPENSE ? "Spending" : "Income"} amount={props.balance} />
+                <Box title={props.identifier === PAGE_ID.EXPENSE ? "Budget" : "Target"} amount={props.budget} />
+                <Box title={props.identifier === PAGE_ID.EXPENSE ? "Saving" : "Excess"} amount={props.saving} />
             </div>
             <div className={styles["sub-header"]}>
                 <h2>{props.title + "s"}</h2>
@@ -86,7 +98,7 @@ function IncomeExpense(props) {
                     <Button name="New Category" onClick={getCategoryForm} />
                     <Button name="Show Category" onClick={getCategoryTableModal} />
                     <Button name={"New " + props.title} onClick={getIncomeExpenseForm} />
-                    <Button name="New Filter" />
+                    <Button name="New Filter" onClick={getFilterModal}/>
                 </div>
             </div>
             <Pagination currentPage={currentPage} pageCount={pageCount} onPageBtn={pageChangeHandler}/>

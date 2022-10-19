@@ -22,8 +22,6 @@ const getSum = (arr, property) => {
 }
 
 function MainPage() {
-
-
     const [form, setForm] = useState("");
     const [balance, setBalance] = useState({
         "cash_balance": 0,
@@ -48,10 +46,11 @@ function MainPage() {
             .then(res => {
                 const accounts = cashAccounts
                 accounts.push(res.data);
-                setCashAccounts(accounts)
-                closeHandler()
+                setCashAccounts(accounts);
+                updateBalanceSummary();
+                closeHandler();
             }).catch(err => {
-                console.log(err)
+                console.log(err);
             })
     };
 
@@ -74,23 +73,29 @@ function MainPage() {
             })
     };
 
-    const makePayment = async (data, identifier) => {
+    const updateCategory = async (data, identifier, index) => {
+        const endpoint = identifier === PAGE_ID.EXPENSE ? 'expense-categories/' : 'income-categories/';
         console.log(data);
-        const endpoint = identifier === PAGE_ID.PAYABLE ? 'payables/' : 'receivables/'
-        const payable = await axios.get(`${host}${endpoint}${data.id}/`);
-        const payableData = payable.data
-        payableData.paid = true;
-        payableData.payment_date = data.date;
-        payableData.cash_account = data.account;
-        console.log(payableData);
-        axios.put(`${host}${endpoint}${data.id}/`, payableData)
-            .then(res => {
-                console.log(res);
-                closeHandler()
-            }).catch(err => {
-                console.log(err);
-            })
+        console.log(host)
+        axios.put(`${host}${endpoint}${data.id}`, data).then(res => {
+            if (identifier === PAGE_ID.EXPENSE) {
+                setExpenseCategories(prev => {
+                    prev[index] = res.data;
+                    return [...prev];
+                });
+            } else if (identifier === PAGE_ID.INCOME) {
+                setIncomeCategories(prev => {
+                    prev[index] = res.data;
+                    return [...prev];
+                });
+            }
+            closeHandler();
+        }
+        ).catch((err) => {
+            console.log(err);
+        })
     };
+
 
     const closeHandler = () => {
         setForm("")
@@ -98,6 +103,41 @@ function MainPage() {
 
     const formOpenHandler = (form) => {
         setForm(form)
+    }
+
+    const updateBalanceSummary = async () => {
+        try {
+            const balanceSummary = await axios.get(`${host}balance-summary/`);
+            setBalance(balanceSummary.data[0]);
+        }catch (error) {
+            console.log(error);
+        }
+    }
+
+    const updateBalance = async (identifier) => {
+        try {
+            const time = new Date();
+            const year = time.getFullYear();
+            const month = time.getMonth() + 1;
+            const balanceSummary = axios.get(`${host}balance-summary/`);
+            const accounts = axios.get(`${host}cash-accounts/`)
+            const summary = identifier === PAGE_ID.EXPENSE ? axios.get(`${host}monthly-expense-summary/${year}/${month}`) : axios.get(`${host}monthly-income-summary/${year}/${month}`);
+            
+            console.log('Update called');
+    
+            Promise.allSettled([balanceSummary, accounts, summary]).then(results => {
+                setBalance(results[0].value.data[0]);
+                setCashAccounts(results[1].value.data)
+                if(identifier === PAGE_ID.EXPENSE){
+                    setExpenseSummary(results[2].value.data);
+                } else {
+                    setIncomeSummary(results[2].value.data);
+                }
+            })
+        }catch (error) {
+            console.log(error);
+        }
+
     }
 
     async function getData() {
@@ -117,9 +157,9 @@ function MainPage() {
                 setBalance(results[0].value.data[0])
                 setExpenseSummary(results[1].value.data);
                 setIncomeSummary(results[2].value.data);
-                setCashAccounts(results[3].value.data)
-                setExpenseCategories(results[4].value.data)
-                setIncomeCategories(results[5].value.data)
+                setCashAccounts(results[3].value.data);
+                setExpenseCategories(results[4].value.data);
+                setIncomeCategories(results[5].value.data);
             });
         } catch (error) {
             console.log(error);
@@ -168,7 +208,9 @@ function MainPage() {
                         categories={expenseCategories}
                         cashAccounts={cashAccounts}
                         formatter={formatter}
-                        onCategoryBtn={submitNewCategory}
+                        onNewCategory={submitNewCategory}
+                        onUpdateCategory={updateCategory}
+                        onUpdate={updateBalance}
                     />
                 </Route>
                 <Route path="/incomes">
@@ -183,12 +225,16 @@ function MainPage() {
                         categories={incomeCategories}
                         cashAccounts={cashAccounts}
                         formatter={formatter}
-                        onCategoryBtn={submitNewCategory}
+                        onNewCategory={submitNewCategory}
+                        onUpdateCategory={updateCategory}
+                        onUpdate={updateBalance}
                     />
                 </Route>
                 <Route path="/dashboard">
                     <DashBoard balance={cashBalance}
                         identifier={PAGE_ID.DASHBOARD}
+                        expenseSummary={expenseSummary}
+                        incomeSummary={incomeSummary}
                         expenseBalance={expenseBalance}
                         incomeBalance={incomeBalance}
                         formatter={formatter}

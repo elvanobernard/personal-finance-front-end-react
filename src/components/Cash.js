@@ -25,7 +25,7 @@ function Cash(props) {
                 <h2>Cash</h2>
                 <div className={styles["button-container"]}>
                     <Button name="New Account" onClick={getAccountForm} />
-                    <Button name="New Transaction" />
+                    {/* <Button name="New Transaction" /> */}
                 </div>
             </div>
             <CashTable rows={props.cashAccounts} />

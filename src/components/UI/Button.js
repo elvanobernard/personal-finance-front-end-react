@@ -17,3 +17,11 @@ export function SmallButton(props) {
         <button className={styles['small-btn'] + " " + button_class} onClick={props.onClick}>{props.name}</button>
     )
 }
+
+export function EditButton(props) {
+    const button_class = props.className ? props.className : ""
+
+    return (
+        <button className={styles['small-btn'] + " " + button_class} onClick={props.onClick}>{props.name}</button>
+    )
+}

@@ -34,3 +34,13 @@
     display: flex;
     column-gap: 0.8rem;
 }
+
+
+.filter-flex {
+    display: flex;
+    column-gap: 1rem;
+}
+
+.filter-flex input {
+    width: 100%;
+}

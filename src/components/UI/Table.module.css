@@ -119,3 +119,8 @@ tbody tr {
     width: 30%;
     text-align: left;
 }
+
+.category-table td:nth-child(3) {
+    width: 30%;
+    text-align: center;
+}
